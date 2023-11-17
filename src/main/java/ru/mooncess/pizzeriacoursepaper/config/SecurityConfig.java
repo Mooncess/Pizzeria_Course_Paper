@@ -43,7 +43,7 @@ public class SecurityConfig {
                 .authorizeRequests() // Настройка правил авторизации запросов
                 .antMatchers("/secured").authenticated() // Требует аутентификации
                 .antMatchers("/info").authenticated()
-                .antMatchers("/admin").hasRole("ADMIN") // Требует роль ADMIN
+                .antMatchers("/admin/**").hasRole("ADMIN") // Требует роль ADMIN
                 .anyRequest().permitAll() // доступ ко всем остальным URL-адресам без требования аутентификации
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Устанавливает стратегию без сеанса (Stateless) для обеспечения безопасности авторизации на основе токена

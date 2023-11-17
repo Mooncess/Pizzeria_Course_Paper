@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class JwtTokenUtils {
-    @Value("omegaabobarewhrewmfdjshas")
+    @Value("pizzeriacoursepapersixxs")
     private String secret;
 
     @Value("30m")
