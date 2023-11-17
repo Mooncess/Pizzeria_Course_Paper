@@ -7,6 +7,6 @@ import ru.mooncess.pizzeriacoursepaper.entities.Role;
 import java.util.Optional;
 
 @Repository
-public interface RoleRepository extends CrudRepository<Role, Byte> {
+public interface RoleRepository extends CrudRepository<Role, Integer> {
     Optional<Role> findByName(String name);
 }

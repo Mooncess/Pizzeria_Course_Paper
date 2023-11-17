@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import ru.mooncess.pizzeriacoursepaper.entities.OrderStatus;
 
 @Repository
-public interface OrderStatusRepository extends JpaRepository<OrderStatus, Byte> {
+public interface OrderStatusRepository extends JpaRepository<OrderStatus, Integer> {
 }

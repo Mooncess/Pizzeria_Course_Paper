@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 import ru.mooncess.pizzeriacoursepaper.entities.Dough;
 
 @Repository
-public interface DoughRepository extends JpaRepository<Dough, Byte> {
+public interface DoughRepository extends JpaRepository<Dough, Integer> {
 }

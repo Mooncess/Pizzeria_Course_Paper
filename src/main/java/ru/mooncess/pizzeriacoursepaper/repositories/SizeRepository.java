@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 import ru.mooncess.pizzeriacoursepaper.entities.Size;
 
 @Repository
-public interface SizeRepository extends JpaRepository<Size, Byte> {
+public interface SizeRepository extends JpaRepository<Size, Integer> {
 }
