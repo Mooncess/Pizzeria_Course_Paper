@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Snack extends Product{
-    @Column(nullable = false)
+    @Column(nullable = true)
     private float weight;
 }

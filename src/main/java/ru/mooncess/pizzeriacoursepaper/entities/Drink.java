@@ -12,6 +12,6 @@ import javax.persistence.Entity;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Drink extends Product{
-    @Column(nullable = false)
+    @Column(nullable = true)
     private float volume;
 }

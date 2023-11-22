@@ -16,7 +16,6 @@ public class Pizza extends Product{
     private List<Size> availableSize;
     @ManyToMany(mappedBy = "productsUsingDough")
     private List<Dough> availableDough;
-
     @ManyToMany
     private List<Additive> availableAdditive;
 }

@@ -1,5 +1,6 @@
 package ru.mooncess.pizzeriacoursepaper.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -17,6 +18,7 @@ public class Dough {
     @Column(name = "name")
     private String name;
 
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "dough_product",

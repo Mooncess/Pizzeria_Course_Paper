@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.mooncess.pizzeriacoursepaper.dto.AdditiveCreateDto;
+import ru.mooncess.pizzeriacoursepaper.dto.ComboCreateDto;
 import ru.mooncess.pizzeriacoursepaper.entities.*;
 import ru.mooncess.pizzeriacoursepaper.service.AdminService;
 
@@ -27,12 +28,12 @@ public class AdminController {
     }
 
     @PostMapping("/additive")
-    public ResponseEntity<Additive> createAdditive(@RequestBody AdditiveCreateDto additive) {
+    public ResponseEntity<?> createAdditive(@RequestBody AdditiveCreateDto additive) {
         return adminService.createAdditive(additive);
     }
 
     @PutMapping("/additive/{id}")
-    public ResponseEntity<Additive> updateAdditive(@PathVariable Long id, @RequestBody AdditiveCreateDto additive) {
+    public ResponseEntity<?> updateAdditive(@PathVariable Long id, @RequestBody AdditiveCreateDto additive) {
         return adminService.updateAdditive(id, additive);
     }
 
@@ -102,5 +103,31 @@ public class AdminController {
     @DeleteMapping("/order-status/{id}")
     public ResponseEntity<Void> deleteOrderStatus(@PathVariable Integer id) {
         return adminService.deleteOrderStatus(id);
+    }
+
+    // Combo endpoints
+    @GetMapping("/combo")
+    public ResponseEntity<List<Combo>> getAllCombo() {
+        return adminService.getAllCombo();
+    }
+
+    @GetMapping("/combo/{id}")
+    public ResponseEntity<?> getComboById(@PathVariable Long id) {
+        return adminService.getComboById(id);
+    }
+
+    @PostMapping("/combo")
+    public ResponseEntity<?> createCombo(@RequestBody ComboCreateDto combo) {
+        return adminService.createCombo(combo);
+    }
+
+    @PutMapping("/combo/{id}")
+    public ResponseEntity<?> updateCombo(@PathVariable Long id, @RequestBody ComboCreateDto combo) {
+        return adminService.updateCombo(id, combo);
+    }
+
+    @DeleteMapping("/combo/{id}")
+    public ResponseEntity<Void> deleteCombo(@PathVariable Long id) {
+        return adminService.deleteCombo(id);
     }
 }

@@ -11,10 +11,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Combo extends Product{
     @ManyToOne
-    @JoinColumn(name = "size", nullable = false)
+    @JoinColumn(name = "size", nullable = true)
     private Size availableSize;
     @ManyToOne
-    @JoinColumn(name = "dough", nullable = false)
+    @JoinColumn(name = "dough", nullable = true)
     private Dough availableDough;
 }
 
