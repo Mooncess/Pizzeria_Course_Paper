@@ -62,4 +62,12 @@ public class SnackService {
             return false;
         }
     }
+
+    public List<Snack> findByOrderByPriceAsc(){
+        return snackRepository.findByOrderByPriceAsc();
+    }
+
+    public List<Snack> findByOrderByPriceDesc(){
+        return snackRepository.findByOrderByPriceDesc();
+    }
 }

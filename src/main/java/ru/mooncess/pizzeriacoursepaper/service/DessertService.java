@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.mooncess.pizzeriacoursepaper.dto.DessertCreateDto;
 import ru.mooncess.pizzeriacoursepaper.entities.Dessert;
+import ru.mooncess.pizzeriacoursepaper.entities.Dessert;
 import ru.mooncess.pizzeriacoursepaper.mappers.DessertMapper;
 import ru.mooncess.pizzeriacoursepaper.repositories.dessert.DessertRepository;
 
@@ -60,5 +61,13 @@ public class DessertService {
         } else {
             return false;
         }
+    }
+
+    public List<Dessert> findByOrderByPriceAsc(){
+        return dessertRepository.findByOrderByPriceAsc();
+    }
+
+    public List<Dessert> findByOrderByPriceDesc(){
+        return dessertRepository.findByOrderByPriceDesc();
     }
 }

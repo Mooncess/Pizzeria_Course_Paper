@@ -61,4 +61,12 @@ public class DrinkService {
             return false;
         }
     }
+
+    public List<Drink> findByOrderByPriceAsc(){
+        return drinkRepository.findByOrderByPriceAsc();
+    }
+
+    public List<Drink> findByOrderByPriceDesc(){
+        return drinkRepository.findByOrderByPriceDesc();
+    }
 }

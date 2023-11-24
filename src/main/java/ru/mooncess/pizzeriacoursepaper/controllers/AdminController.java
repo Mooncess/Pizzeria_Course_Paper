@@ -9,6 +9,7 @@ import ru.mooncess.pizzeriacoursepaper.entities.*;
 import ru.mooncess.pizzeriacoursepaper.exceptions.AppError;
 import ru.mooncess.pizzeriacoursepaper.service.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,10 +30,18 @@ public class AdminController {
 
     // Additive endpoints
     @GetMapping("/additive")
-    public ResponseEntity<List<Additive>> getAllAdditives() {
-        return ResponseEntity.ok(additiveService.getAllAdditives());
+    public ResponseEntity<List<Additive>> getAllAdditives(@RequestParam(name = "sort", required = false, defaultValue = "0") Integer sortPrice) {
+        if (sortPrice == 0) {
+            return ResponseEntity.ok(additiveService.getAllAdditives());
+        }
+        else if (sortPrice == 1) {
+            return ResponseEntity.ok(additiveService.findByOrderByPriceAsc());
+        }
+        else if (sortPrice == 2) {
+            return ResponseEntity.ok(additiveService.findByOrderByPriceDesc());
+        }
+        return ResponseEntity.badRequest().build();
     }
-
     @GetMapping("/additive/{id}")
     public ResponseEntity<?> getAdditiveById(@PathVariable Long id) {
         Optional<Additive> optionalAdditive = additiveService.getAdditiveById(id);
@@ -43,7 +52,6 @@ public class AdminController {
             return ResponseEntity.notFound().build();
         }
     }
-
     @PostMapping("/additive")
     public ResponseEntity<?> createAdditive(@RequestBody AdditiveCreateDto additive) {
         Optional<Additive> optionalAdditive = additiveService.createAdditive(additive);
@@ -55,7 +63,6 @@ public class AdminController {
             return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Incorrect creation data"), HttpStatus.BAD_REQUEST);
         }
     }
-
     @PutMapping("/additive/{id}")
     public ResponseEntity<?> updateAdditive(@PathVariable Long id, @RequestBody AdditiveCreateDto additive) {
         Optional<Additive> update = additiveService.updateAdditive(id, additive);
@@ -64,7 +71,6 @@ public class AdminController {
         }
         return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Invalid data to update"), HttpStatus.BAD_REQUEST);
     }
-
     @DeleteMapping("/additive/{id}")
     public ResponseEntity<Void> deleteAdditive(@PathVariable Long id) {
         if (additiveService.deleteAdditive(id)) {
@@ -88,7 +94,6 @@ public class AdminController {
             return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Incorrect creation data"), HttpStatus.BAD_REQUEST);
         }
     }
-
     @PutMapping("/dough/{id}")
     public ResponseEntity<?> updateDough(@PathVariable Integer id, @RequestParam String name) {
         Optional<Dough> update = doughService.updateDough(id, name);
@@ -97,7 +102,6 @@ public class AdminController {
         }
         return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Invalid data to update"), HttpStatus.BAD_REQUEST);
     }
-
     @DeleteMapping("/dough/{id}")
     public ResponseEntity<Void> deleteDough(@PathVariable Integer id) {
         if (doughService.deleteDough(id)) {
@@ -111,7 +115,6 @@ public class AdminController {
     public ResponseEntity<List<Size>> getAllSize() {
         return ResponseEntity.ok(sizeService.getAllSize());
     }
-
     @PostMapping("/size")
     public ResponseEntity<?> createSize(@RequestParam String name) {
         Optional<Size> optionalSize = sizeService.createSize(name);
@@ -122,7 +125,6 @@ public class AdminController {
             return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Incorrect creation data"), HttpStatus.BAD_REQUEST);
         }
     }
-
     @PutMapping("/size/{id}")
     public ResponseEntity<?> updateSize(@PathVariable Integer id, @RequestParam String name) {
         Optional<Size> update = sizeService.updateSize(id, name);
@@ -131,7 +133,6 @@ public class AdminController {
         }
         return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Invalid data to update"), HttpStatus.BAD_REQUEST);
     }
-
     @DeleteMapping("/size/{id}")
     public ResponseEntity<Void> deleteSize(@PathVariable Integer id) {
         if (sizeService.deleteSize(id)) {
@@ -144,7 +145,6 @@ public class AdminController {
     public ResponseEntity<List<OrderStatus>> getAllOrderStatus() {
         return ResponseEntity.ok(orderStatusService.getAllOrderStatus());
     }
-
     @PostMapping("/order-status")
     public ResponseEntity<?> createOrderStatus(@RequestParam String name) {
         Optional<OrderStatus> optionalOrderStatus = orderStatusService.createOrderStatus(name);
@@ -155,7 +155,6 @@ public class AdminController {
             return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Incorrect creation data"), HttpStatus.BAD_REQUEST);
         }
     }
-
     @PutMapping("/order-status/{id}")
     public ResponseEntity<?> updateOrderStatus(@PathVariable Integer id, @RequestParam String name) {
         Optional<OrderStatus> update = orderStatusService.updateOrderStatus(id, name);
@@ -164,7 +163,6 @@ public class AdminController {
         }
         return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Invalid data to update"), HttpStatus.BAD_REQUEST);
     }
-
     @DeleteMapping("/order-status/{id}")
     public ResponseEntity<Void> deleteOrderStatus(@PathVariable Integer id) {
         if (orderStatusService.deleteOrderStatus(id)) {
@@ -172,13 +170,20 @@ public class AdminController {
         }
         return ResponseEntity.notFound().build();
     }
-
     // Combo endpoints
     @GetMapping("/combo")
-    public ResponseEntity<List<Combo>> getAllCombo() {
-        return ResponseEntity.ok(comboService.getAllCombo());
+    public ResponseEntity<List<Combo>> getAllCombo(@RequestParam(name = "sort", required = false, defaultValue = "0") Integer sortPrice) {
+        if (sortPrice == 0) {
+            return ResponseEntity.ok(comboService.getAllCombo());
+        }
+        else if (sortPrice == 1) {
+            return ResponseEntity.ok(comboService.findByOrderByPriceAsc());
+        }
+        else if (sortPrice == 2) {
+            return ResponseEntity.ok(comboService.findByOrderByPriceDesc());
+        }
+        return ResponseEntity.badRequest().build();
     }
-
     @GetMapping("/combo/{id}")
     public ResponseEntity<?> getComboById(@PathVariable Long id) {
         Optional<Combo> optionalCombo = comboService.getComboById(id);
@@ -189,7 +194,6 @@ public class AdminController {
             return ResponseEntity.notFound().build();
         }
     }
-
     @PostMapping("/combo")
     public ResponseEntity<?> createCombo(@RequestBody ComboCreateDto combo) {
         Optional<Combo> optionalCombo = comboService.createCombo(combo);
@@ -199,7 +203,6 @@ public class AdminController {
         }
         return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Incorrect creation data"), HttpStatus.BAD_REQUEST);
     }
-
     @PutMapping("/combo/{id}")
     public ResponseEntity<?> updateCombo(@PathVariable Long id, @RequestBody ComboCreateDto combo) {
         Optional<Combo> update = comboService.updateCombo(id, combo);
@@ -209,7 +212,6 @@ public class AdminController {
         return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Invalid data to update"), HttpStatus.BAD_REQUEST);
 
     }
-
     @DeleteMapping("/combo/{id}")
     public ResponseEntity<Void> deleteCombo(@PathVariable Long id) {
         if (comboService.deleteCombo(id)) {
@@ -217,13 +219,20 @@ public class AdminController {
         }
         return ResponseEntity.notFound().build();
     }
-
     // Dessert endpoints
     @GetMapping("/dessert")
-    public ResponseEntity<List<Dessert>> getAllDessert() {
-        return ResponseEntity.ok(dessertService.getAllDessert());
+    public ResponseEntity<List<Dessert>> getAllDessert(@RequestParam(name = "sort", required = false, defaultValue = "0") Integer sortPrice) {
+        if (sortPrice == 0) {
+            return ResponseEntity.ok(dessertService.getAllDessert());
+        }
+        else if (sortPrice == 1) {
+            return ResponseEntity.ok(dessertService.findByOrderByPriceAsc());
+        }
+        else if (sortPrice == 2) {
+            return ResponseEntity.ok(dessertService.findByOrderByPriceDesc());
+        }
+        return ResponseEntity.badRequest().build();
     }
-
     @GetMapping("/dessert/{id}")
     public ResponseEntity<?> getDessertById(@PathVariable Long id) {
         Optional<Dessert> optionalDessert = dessertService.getDessertById(id);
@@ -234,7 +243,6 @@ public class AdminController {
             return ResponseEntity.notFound().build();
         }
     }
-
     @PostMapping("/dessert")
     public ResponseEntity<?> createDessert(@RequestBody DessertCreateDto dessert) {
         Optional<Dessert> optionalDessert = dessertService.createDessert(dessert);
@@ -245,7 +253,6 @@ public class AdminController {
             return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Incorrect creation data"), HttpStatus.BAD_REQUEST);
         }
     }
-
     @PutMapping("/dessert/{id}")
     public ResponseEntity<?> updateDessert(@PathVariable Long id, @RequestBody DessertCreateDto dessert) {
         Optional<Dessert> update = dessertService.updateDessert(id, dessert);
@@ -254,7 +261,6 @@ public class AdminController {
         }
         return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Invalid data to update"), HttpStatus.BAD_REQUEST);
     }
-
     @DeleteMapping("/dessert/{id}")
     public ResponseEntity<Void> deleteDessert(@PathVariable Long id) {
         if (dessertService.deleteDessert(id)) {
@@ -262,13 +268,20 @@ public class AdminController {
         }
         return ResponseEntity.notFound().build();
     }
-
     // Drink endpoints
     @GetMapping("/drink")
-    public ResponseEntity<List<Drink>> getAllDrink() {
-        return ResponseEntity.ok(drinkService.getAllDrink());
+    public ResponseEntity<List<Drink>> getAllDrink(@RequestParam(name = "sort", required = false, defaultValue = "0") Integer sortPrice) {
+        if (sortPrice == 0) {
+            return ResponseEntity.ok(drinkService.getAllDrink());
+        }
+        else if (sortPrice == 1) {
+            return ResponseEntity.ok(drinkService.findByOrderByPriceAsc());
+        }
+        else if (sortPrice == 2) {
+            return ResponseEntity.ok(drinkService.findByOrderByPriceDesc());
+        }
+        return ResponseEntity.badRequest().build();
     }
-
     @GetMapping("/drink/{id}")
     public ResponseEntity<?> getDrinkById(@PathVariable Long id) {
         Optional<Drink> optionalDrink = drinkService.getDrinkById(id);
@@ -279,7 +292,6 @@ public class AdminController {
             return ResponseEntity.notFound().build();
         }
     }
-
     @PostMapping("/drink")
     public ResponseEntity<?> createDrink(@RequestBody DrinkCreateDto drink) {
         Optional<Drink> optionalDrink = drinkService.createDrink(drink);
@@ -290,7 +302,6 @@ public class AdminController {
             return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Incorrect creation data"), HttpStatus.BAD_REQUEST);
         }
     }
-
     @PutMapping("/drink/{id}")
     public ResponseEntity<?> updateDrink(@PathVariable Long id, @RequestBody DrinkCreateDto drink) {
         Optional<Drink> update = drinkService.updateDrink(id, drink);
@@ -299,7 +310,6 @@ public class AdminController {
         }
         return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Invalid data to update"), HttpStatus.BAD_REQUEST);
     }
-
     @DeleteMapping("/drink/{id}")
     public ResponseEntity<Void> deleteDrink(@PathVariable Long id) {
         if (drinkService.deleteDrink(id)) {
@@ -307,14 +317,20 @@ public class AdminController {
         }
         return ResponseEntity.notFound().build();
     }
-
     // Hot endpoints
-
     @GetMapping("/hot")
-    public ResponseEntity<List<Hot>> getAllHot() {
-        return ResponseEntity.ok(hotService.getAllHot());
+    public ResponseEntity<List<Hot>> getAllHot(@RequestParam(name = "sort", required = false, defaultValue = "0") Integer sortPrice) {
+        if (sortPrice == 0) {
+            return ResponseEntity.ok(hotService.getAllHot());
+        }
+        else if (sortPrice == 1) {
+            return ResponseEntity.ok(hotService.findByOrderByPriceAsc());
+        }
+        else if (sortPrice == 2) {
+            return ResponseEntity.ok(hotService.findByOrderByPriceDesc());
+        }
+        return ResponseEntity.badRequest().build();
     }
-
     @GetMapping("/hot/{id}")
     public ResponseEntity<?> getHotById(@PathVariable Long id) {
         Optional<Hot> optionalHot = hotService.getHotById(id);
@@ -325,7 +341,6 @@ public class AdminController {
             return ResponseEntity.notFound().build();
         }
     }
-
     @PostMapping("/hot")
     public ResponseEntity<?> createHot(@RequestBody HotCreateDto hot) {
         Optional<Hot> optionalHot = hotService.createHot(hot);
@@ -336,7 +351,6 @@ public class AdminController {
             return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Incorrect creation data"), HttpStatus.BAD_REQUEST);
         }
     }
-
     @PutMapping("/hot/{id}")
     public ResponseEntity<?> updateHot(@PathVariable Long id, @RequestBody HotCreateDto hot) {
         Optional<Hot> update = hotService.updateHot(id, hot);
@@ -345,7 +359,6 @@ public class AdminController {
         }
         return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Invalid data to update"), HttpStatus.BAD_REQUEST);
     }
-
     @DeleteMapping("/hot/{id}")
     public ResponseEntity<Void> deleteHot(@PathVariable Long id) {
         if (hotService.deleteHot(id)) {
@@ -355,12 +368,19 @@ public class AdminController {
     }
 
     // Snack endpoints
-
     @GetMapping("/snack")
-    public ResponseEntity<List<Snack>> getAllSnack() {
-        return ResponseEntity.ok(snackService.getAllSnack());
+    public ResponseEntity<List<Snack>> getAllSnack(@RequestParam(name = "sort", required = false, defaultValue = "0") Integer sortPrice) {
+        if (sortPrice == 0) {
+            return ResponseEntity.ok(snackService.getAllSnack());
+        }
+        else if (sortPrice == 1) {
+            return ResponseEntity.ok(snackService.findByOrderByPriceAsc());
+        }
+        else if (sortPrice == 2) {
+            return ResponseEntity.ok(snackService.findByOrderByPriceDesc());
+        }
+        return ResponseEntity.badRequest().build();
     }
-
     @GetMapping("/snack/{id}")
     public ResponseEntity<?> getSnackById(@PathVariable Long id) {
         Optional<Snack> optionalSnack = snackService.getSnackById(id);
@@ -371,7 +391,6 @@ public class AdminController {
             return ResponseEntity.notFound().build();
         }
     }
-
     @PostMapping("/snack")
     public ResponseEntity<?> createSnack(@RequestBody SnackCreateDto snack) {
         Optional<Snack> optionalSnack = snackService.createSnack(snack);
@@ -382,7 +401,6 @@ public class AdminController {
             return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Incorrect creation data"), HttpStatus.BAD_REQUEST);
         }
     }
-
     @PutMapping("/snack/{id}")
     public ResponseEntity<?> updateSnack(@PathVariable Long id, @RequestBody SnackCreateDto snack) {
         Optional<Snack> update = snackService.updateSnack(id, snack);
@@ -391,7 +409,6 @@ public class AdminController {
         }
         return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Invalid data to update"), HttpStatus.BAD_REQUEST);
     }
-
     @DeleteMapping("/snack/{id}")
     public ResponseEntity<Void> deleteSnack(@PathVariable Long id) {
         if (snackService.deleteSnack(id)) {
@@ -401,10 +418,18 @@ public class AdminController {
     }
 
     // Pizza endpoints
-
     @GetMapping("/pizza")
-    public ResponseEntity<List<Pizza>> getAllPizza() {
-        return ResponseEntity.ok(pizzaService.getAllPizza());
+    public ResponseEntity<List<Pizza>> getAllPizza(@RequestParam(name = "sort", required = false, defaultValue = "0") Integer sortPrice) {
+        if (sortPrice == 0) {
+            return ResponseEntity.ok(pizzaService.getAllPizza());
+        }
+        else if (sortPrice == 1) {
+            return ResponseEntity.ok(pizzaService.findByOrderByPriceAsc());
+        }
+        else if (sortPrice == 2) {
+            return ResponseEntity.ok(pizzaService.findByOrderByPriceDesc());
+        }
+        return ResponseEntity.badRequest().build();
     }
 
     @GetMapping("/pizza/{id}")
@@ -442,5 +467,17 @@ public class AdminController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
+    }
+    // Product endpoints
+    @GetMapping("/category/all")
+    public ResponseEntity<List<Product>> getAllProduct() {
+        List<Product> productList = new ArrayList<>();
+        productList.addAll(pizzaService.getAllPizza());
+        productList.addAll(snackService.getAllSnack());
+        productList.addAll(drinkService.getAllDrink());
+        productList.addAll(dessertService.getAllDessert());
+        productList.addAll(hotService.getAllHot());
+        productList.addAll(comboService.getAllCombo());
+        return ResponseEntity.ok(productList);
     }
 }

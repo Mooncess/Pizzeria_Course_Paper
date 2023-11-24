@@ -9,7 +9,7 @@ import ru.mooncess.pizzeriacoursepaper.entities.Dough;
 import ru.mooncess.pizzeriacoursepaper.entities.Pizza;
 import ru.mooncess.pizzeriacoursepaper.entities.Size;
 import ru.mooncess.pizzeriacoursepaper.mappers.PizzaMapper;
-import ru.mooncess.pizzeriacoursepaper.repositories.AdditiveRepository;
+import ru.mooncess.pizzeriacoursepaper.repositories.additive.AdditiveRepository;
 import ru.mooncess.pizzeriacoursepaper.repositories.DoughRepository;
 import ru.mooncess.pizzeriacoursepaper.repositories.SizeRepository;
 import ru.mooncess.pizzeriacoursepaper.repositories.pizza.PizzaRepository;
@@ -39,8 +39,6 @@ public class PizzaService {
         try {
             if (pizza.getPrice() > 0) {
                 Pizza newPizza = pizzaMapper.pizzaCreateDtoToEntity(pizza);
-//                newPizza.setId(pizzaRepository.save(newPizza).getId()); // This is necessary, because otherwise an entity with null values in the fields will be returned
-//                return Optional.of(pizzaRepository.save(newPizza)); // I really don't understand what's going on here...
                 List<Integer> tempList = new ArrayList<>();
                 for (Size i : newPizza.getAvailableSizes()) {
                     tempList.add(i.getId());
@@ -91,5 +89,13 @@ public class PizzaService {
         } else {
             return false;
         }
+    }
+
+    public List<Pizza> findByOrderByPriceAsc(){
+        return pizzaRepository.findByOrderByPriceAsc();
+    }
+
+    public List<Pizza> findByOrderByPriceDesc(){
+        return pizzaRepository.findByOrderByPriceDesc();
     }
 }

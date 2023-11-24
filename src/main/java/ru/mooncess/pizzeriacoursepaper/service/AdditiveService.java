@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.mooncess.pizzeriacoursepaper.dto.AdditiveCreateDto;
 import ru.mooncess.pizzeriacoursepaper.entities.Additive;
 import ru.mooncess.pizzeriacoursepaper.mappers.AdditiveMapper;
-import ru.mooncess.pizzeriacoursepaper.repositories.AdditiveRepository;
+import ru.mooncess.pizzeriacoursepaper.repositories.additive.AdditiveRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -49,5 +49,13 @@ public class AdditiveService {
         } else {
             return false;
         }
+    }
+
+    public List<Additive> findByOrderByPriceAsc(){
+        return additiveRepository.findByOrderByPriceAsc();
+    }
+
+    public List<Additive> findByOrderByPriceDesc(){
+        return additiveRepository.findByOrderByPriceDesc();
     }
 }

@@ -65,4 +65,12 @@ public class ComboService {
             return false;
         }
     }
+
+    public List<Combo> findByOrderByPriceAsc(){
+        return comboRepository.findByOrderByPriceAsc();
+    }
+
+    public List<Combo> findByOrderByPriceDesc(){
+        return comboRepository.findByOrderByPriceDesc();
+    }
 }

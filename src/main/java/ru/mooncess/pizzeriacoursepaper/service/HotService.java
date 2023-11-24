@@ -61,4 +61,12 @@ public class HotService {
             return false;
         }
     }
+
+    public List<Hot> findByOrderByPriceAsc(){
+        return hotRepository.findByOrderByPriceAsc();
+    }
+
+    public List<Hot> findByOrderByPriceDesc(){
+        return hotRepository.findByOrderByPriceDesc();
+    }
 }
