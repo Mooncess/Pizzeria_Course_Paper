@@ -1,12 +1,9 @@
 package ru.mooncess.pizzeriacoursepaper.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.mooncess.pizzeriacoursepaper.dto.AdditiveCreateDto;
 import ru.mooncess.pizzeriacoursepaper.entities.Additive;
-import ru.mooncess.pizzeriacoursepaper.exceptions.AppError;
 import ru.mooncess.pizzeriacoursepaper.mappers.AdditiveMapper;
 import ru.mooncess.pizzeriacoursepaper.repositories.AdditiveRepository;
 
@@ -19,49 +16,38 @@ public class AdditiveService {
     private final AdditiveRepository additiveRepository;
     private final AdditiveMapper additiveMapper;
 
-    public ResponseEntity<List<Additive>> getAllAdditives() {
-        List<Additive> additives = additiveRepository.findAll();
-        return ResponseEntity.ok(additives);
+    public List<Additive> getAllAdditives() {
+        return additiveRepository.findAll();
     }
-    public ResponseEntity<?> getAdditiveById(Long id) {
-        Optional<Additive> optionalAdditive = additiveRepository.findById(id);
-        if (optionalAdditive.isPresent()) {
-            Additive additive = optionalAdditive.get();
-            return ResponseEntity.ok(additive);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public Optional<Additive> getAdditiveById(Long id) {
+        return additiveRepository.findById(id);
     }
-    public ResponseEntity<?> createAdditive(AdditiveCreateDto additive) {
+    public Optional<Additive> createAdditive(AdditiveCreateDto additive) {
         if (additive.getPrice() <= 0 ) {
-            return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Incorrect creation data"), HttpStatus.BAD_REQUEST);
+            return Optional.empty();
         }
         Additive newAdditive = additiveMapper.toEntity(additive);
-        Additive createdAdditive = additiveRepository.save(newAdditive);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdAdditive);
+        return Optional.of(additiveRepository.save(newAdditive));
     }
-    public ResponseEntity<?> updateAdditive(Long id, AdditiveCreateDto additive) {
+    public Optional<Additive> updateAdditive(Long id, AdditiveCreateDto additive) {
         Optional<Additive> optionalAdditive = additiveRepository.findById(id);
         if (optionalAdditive.isPresent()) {
-            if (additive.getPrice() <= 0 ) {
-                return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Invalid data to update"), HttpStatus.BAD_REQUEST);
+            if (additive.getPrice() > 0) {
+                Additive update = additiveMapper.toEntity(additive);
+                update.setId(id);
+                return Optional.of(additiveRepository.save(update));
             }
-            Additive updatedAdditive = additiveMapper.toEntity(additive);
-            updatedAdditive.setId(id);
-            Additive savedAdditive = additiveRepository.save(updatedAdditive);
-            return ResponseEntity.ok(savedAdditive);
-        } else {
-            return ResponseEntity.notFound().build();
         }
+        return Optional.empty();
     }
 
-    public ResponseEntity<Void> deleteAdditive(Long id) {
+    public boolean deleteAdditive(Long id) {
         Optional<Additive> optionalAdditive = additiveRepository.findById(id);
         if (optionalAdditive.isPresent()) {
             additiveRepository.deleteById(id);
-            return ResponseEntity.noContent().build();
+            return true;
         } else {
-            return ResponseEntity.notFound().build();
+            return false;
         }
     }
 }

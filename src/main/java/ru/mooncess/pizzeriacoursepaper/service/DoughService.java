@@ -14,34 +14,35 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class DoughService {
     private final DoughRepository doughRepository;
-    public ResponseEntity<List<Dough>> getAllDough() {
-        List<Dough> doughs = doughRepository.findAll();
-        return ResponseEntity.ok(doughs);
+
+    public List<Dough> getAllDough() {
+        return doughRepository.findAll();
     }
-    public ResponseEntity<Dough> createDough(String name) {
+
+    public Optional<Dough> createDough(String name) {
         Dough dough = new Dough();
         dough.setName(name);
-        Dough createdDough = doughRepository.save(dough);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdDough);
+        return Optional.of(doughRepository.save(dough));
     }
-    public ResponseEntity<Dough> updateDough(Integer id, String name) {
+
+    public Optional<Dough> updateDough(Integer id, String name) {
         Optional<Dough> optionalDough = doughRepository.findById(id);
         if (optionalDough.isPresent()) {
-            Dough updatedDough = doughRepository.getById(id);
-            updatedDough.setName(name);
-            Dough savedDough = doughRepository.save(updatedDough);
-            return ResponseEntity.ok(savedDough);
-        } else {
-            return ResponseEntity.notFound().build();
+            Dough update = new Dough();
+            update.setName(name);
+            update.setId(id);
+            return Optional.of(doughRepository.save(update));
         }
+        return Optional.empty();
     }
-    public ResponseEntity<Void> deleteDough(Integer id) {
+
+    public boolean deleteDough(Integer id) {
         Optional<Dough> optionalDough = doughRepository.findById(id);
         if (optionalDough.isPresent()) {
             doughRepository.deleteById(id);
-            return ResponseEntity.noContent().build();
+            return true;
         } else {
-            return ResponseEntity.notFound().build();
+            return false;
         }
     }
 }

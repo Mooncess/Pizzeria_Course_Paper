@@ -11,19 +11,10 @@ import java.util.List;
 @Table(name = "dough")
 public class Dough {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id")
     private Integer id;
 
     @Column(name = "name")
     private String name;
-
-    @JsonIgnore
-    @ManyToMany
-    @JoinTable(
-            name = "dough_product",
-            joinColumns = @JoinColumn(name = "dough_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id")
-    )
-    private List<Product> productsUsingDough;
 }

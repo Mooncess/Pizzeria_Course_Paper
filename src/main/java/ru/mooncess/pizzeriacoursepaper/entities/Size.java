@@ -12,19 +12,10 @@ import java.util.List;
 @Table(name = "size")
 public class Size {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id")
     private Integer id;
 
     @Column(name = "name")
     private String name;
-
-    @JsonIgnore
-    @ManyToMany
-    @JoinTable(
-            name = "size_product",
-            joinColumns = @JoinColumn(name = "size_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id")
-    )
-    private List<Product> productsUsingSize;
 }

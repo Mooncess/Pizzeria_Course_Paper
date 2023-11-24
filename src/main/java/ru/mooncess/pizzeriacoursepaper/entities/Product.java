@@ -18,6 +18,6 @@ public class Product {
     @Column(nullable = false)
     private String title;
     @Column(nullable = false)
-    protected Float price;
+    private Float price;
     private String description;
 }

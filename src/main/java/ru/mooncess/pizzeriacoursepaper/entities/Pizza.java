@@ -12,11 +12,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Pizza extends Product{
-    @ManyToMany(mappedBy = "productsUsingSize")
-    private List<Size> availableSize;
-    @ManyToMany(mappedBy = "productsUsingDough")
-    private List<Dough> availableDough;
     @ManyToMany
-    private List<Additive> availableAdditive;
+    private List<Size> availableSizes;
+    @ManyToMany
+    private List<Dough> availableDoughs;
+    @ManyToMany
+    private List<Additive> availableAdditives;
 }
 

@@ -13,36 +13,36 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class SizeService {
-    public final SizeRepository sizeRepository;
+    private final SizeRepository sizeRepository;
 
-    public ResponseEntity<List<Size>> getAllSize() {
-        List<Size> sizes = sizeRepository.findAll();
-        return ResponseEntity.ok(sizes);
+    public List<Size> getAllSize() {
+        return sizeRepository.findAll();
     }
-    public ResponseEntity<Size> createSize(String name) {
+
+    public Optional<Size> createSize(String name) {
         Size size = new Size();
         size.setName(name);
-        Size createdSize = sizeRepository.save(size);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdSize);
+        return Optional.of(sizeRepository.save(size));
     }
-    public ResponseEntity<Size> updateSize(Integer id, String name) {
+
+    public Optional<Size> updateSize(Integer id, String name) {
         Optional<Size> optionalSize = sizeRepository.findById(id);
         if (optionalSize.isPresent()) {
-            Size updatedSize = sizeRepository.getById(id);
-            updatedSize.setName(name);
-            Size savedSize = sizeRepository.save(updatedSize);
-            return ResponseEntity.ok(savedSize);
-        } else {
-            return ResponseEntity.notFound().build();
+            Size update = new Size();
+            update.setName(name);
+            update.setId(id);
+            return Optional.of(sizeRepository.save(update));
         }
+        return Optional.empty();
     }
-    public ResponseEntity<Void> deleteSize(Integer id) {
+
+    public boolean deleteSize(Integer id) {
         Optional<Size> optionalSize = sizeRepository.findById(id);
         if (optionalSize.isPresent()) {
             sizeRepository.deleteById(id);
-            return ResponseEntity.noContent().build();
+            return true;
         } else {
-            return ResponseEntity.notFound().build();
+            return false;
         }
     }
 }

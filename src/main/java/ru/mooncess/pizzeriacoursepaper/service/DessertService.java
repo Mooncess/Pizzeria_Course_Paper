@@ -1,12 +1,9 @@
 package ru.mooncess.pizzeriacoursepaper.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.mooncess.pizzeriacoursepaper.dto.DessertCreateDto;
 import ru.mooncess.pizzeriacoursepaper.entities.Dessert;
-import ru.mooncess.pizzeriacoursepaper.exceptions.AppError;
 import ru.mooncess.pizzeriacoursepaper.mappers.DessertMapper;
 import ru.mooncess.pizzeriacoursepaper.repositories.dessert.DessertRepository;
 
@@ -19,48 +16,49 @@ public class DessertService {
     private final DessertRepository dessertRepository;
     private final DessertMapper dessertMapper;
 
-    public ResponseEntity<List<Dessert>> getAllDessert() {
-        List<Dessert> desserts = dessertRepository.findAll();
-        return ResponseEntity.ok(desserts);
+    public List<Dessert> getAllDessert() {
+        return dessertRepository.findAll();
     }
-    public ResponseEntity<?> getDessertById(Long id) {
-        Optional<Dessert> optionalDessert = dessertRepository.findById(id);
-        if (optionalDessert.isPresent()) {
-            Dessert dessert = optionalDessert.get();
-            return ResponseEntity.ok(dessert);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+
+    public Optional<Dessert> getDessertById(Long id) {
+        return dessertRepository.findById(id);
     }
-    public ResponseEntity<?> createDessert(DessertCreateDto dessert) {
-        if (dessert.getPrice() <= 0 || dessert.getWeight() <= 0) {
-            return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Invalid data to update"), HttpStatus.BAD_REQUEST);
-        }
-        Dessert newDessert = dessertMapper.toEntity(dessert);
-        Dessert createdDessert = dessertRepository.save(newDessert);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdDessert);
-    }
-    public ResponseEntity<?> updateDessert(Long id, DessertCreateDto dessert) {
-        Optional<Dessert> optionalDessert = dessertRepository.findById(id);
-        if (optionalDessert.isPresent()) {
-            if (dessert.getPrice() <= 0 || dessert.getWeight() <= 0) {
-                return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Invalid data to update"), HttpStatus.BAD_REQUEST);
+
+    public Optional<Dessert> createDessert(DessertCreateDto dessert) {
+        if (dessert.getPrice() > 0 && dessert.getWeight() > 0) {
+            Dessert newDessert = dessertMapper.toEntity(dessert);
+            try {
+                return Optional.of(dessertRepository.getById(dessertRepository.save(newDessert).getId()));
+            } catch (Exception e) {
+                return Optional.empty();
             }
-            Dessert updatedDessert = dessertMapper.toEntity(dessert);
-            updatedDessert.setId(id);
-            Dessert savedDessert = dessertRepository.save(updatedDessert);
-            return ResponseEntity.ok(savedDessert);
-        } else {
-            return ResponseEntity.notFound().build();
         }
+        return Optional.empty();
     }
-    public ResponseEntity<Void> deleteDessert(Long id) {
+
+    public Optional<Dessert> updateDessert(Long id, DessertCreateDto dessert) {
+        Optional<Dessert> optionalDessert = dessertRepository.findById(id);
+        if (optionalDessert.isPresent()) {
+            if (dessert.getPrice() > 0 && dessert.getWeight() > 0) {
+                Dessert updatedDessert = dessertMapper.toEntity(dessert);
+                updatedDessert.setId(id);
+                try {
+                    return Optional.of(dessertRepository.save(updatedDessert));
+                } catch (Exception e) {
+                    return Optional.empty();
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+    public boolean deleteDessert(Long id) {
         Optional<Dessert> optionalDessert = dessertRepository.findById(id);
         if (optionalDessert.isPresent()) {
             dessertRepository.deleteById(id);
-            return ResponseEntity.noContent().build();
+            return true;
         } else {
-            return ResponseEntity.notFound().build();
+            return false;
         }
     }
 }

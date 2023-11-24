@@ -15,34 +15,34 @@ import java.util.Optional;
 public class OrderStatusService {
     private final OrderStatusRepository orderStatusRepository;
 
-    public ResponseEntity<List<OrderStatus>> getAllOrderStatus() {
-        List<OrderStatus> orderStatuses = orderStatusRepository.findAll();
-        return ResponseEntity.ok(orderStatuses);
+    public List<OrderStatus> getAllOrderStatus() {
+        return orderStatusRepository.findAll();
     }
-    public ResponseEntity<OrderStatus> createOrderStatus(String name) {
+
+    public Optional<OrderStatus> createOrderStatus(String name) {
         OrderStatus orderStatus = new OrderStatus();
         orderStatus.setName(name);
-        OrderStatus createdOrderStatus = orderStatusRepository.save(orderStatus);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdOrderStatus);
+        return Optional.of(orderStatusRepository.save(orderStatus));
     }
-    public ResponseEntity<OrderStatus> updateOrderStatus(Integer id, String name) {
+
+    public Optional<OrderStatus> updateOrderStatus(Integer id, String name) {
         Optional<OrderStatus> optionalOrderStatus = orderStatusRepository.findById(id);
         if (optionalOrderStatus.isPresent()) {
-            OrderStatus updatedOrderStatus = orderStatusRepository.getById(id);
-            updatedOrderStatus.setName(name);
-            OrderStatus savedOrderStatus = orderStatusRepository.save(updatedOrderStatus);
-            return ResponseEntity.ok(savedOrderStatus);
-        } else {
-            return ResponseEntity.notFound().build();
+            OrderStatus update = new OrderStatus();
+            update.setName(name);
+            update.setId(id);
+            return Optional.of(orderStatusRepository.save(update));
         }
+        return Optional.empty();
     }
-    public ResponseEntity<Void> deleteOrderStatus(Integer id) {
+
+    public boolean deleteOrderStatus(Integer id) {
         Optional<OrderStatus> optionalOrderStatus = orderStatusRepository.findById(id);
         if (optionalOrderStatus.isPresent()) {
             orderStatusRepository.deleteById(id);
-            return ResponseEntity.noContent().build();
+            return true;
         } else {
-            return ResponseEntity.notFound().build();
+            return false;
         }
     }
 }
