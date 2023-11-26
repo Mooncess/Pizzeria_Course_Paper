@@ -66,7 +66,7 @@ public class ClientController {
             Combo temp = comboOptional.get();
             Optional<ProductToPurchase> optionalProduct = productToPurchaseService.purchaseProduct(temp, quantity, username, temp.getAvailableDough(), temp.getAvailableSize(), null);
             if (optionalProduct.isPresent()) {
-                return ResponseEntity.status(HttpStatus.CREATED).body(optionalProduct.get());
+                return ResponseEntity.status(HttpStatus.OK).body(optionalProduct.get());
             }
         }
         return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Incorrect data"), HttpStatus.BAD_REQUEST);
@@ -104,7 +104,7 @@ public class ClientController {
             Dessert temp = dessertOptional.get();
             Optional<ProductToPurchase> optionalProduct = productToPurchaseService.purchaseProduct(temp, quantity, username, null, null, null);
             if (optionalProduct.isPresent()) {
-                return ResponseEntity.status(HttpStatus.CREATED).body(optionalProduct.get());
+                return ResponseEntity.status(HttpStatus.OK).body(optionalProduct.get());
             }
         }
         return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Incorrect data"), HttpStatus.BAD_REQUEST);
@@ -219,7 +219,7 @@ public class ClientController {
                 if (dto.getAdditives().isEmpty()) dto.setAdditives(null);
                 Optional<ProductToPurchase> optionalProduct = productToPurchaseService.purchaseProduct(temp, quantity, username, optionalDough.get(), optionalSize.get(), dto.getAdditives());
                 if (optionalProduct.isPresent()) {
-                    return ResponseEntity.status(HttpStatus.CREATED).body(optionalProduct.get());
+                    return ResponseEntity.status(HttpStatus.OK).body(optionalProduct.get());
                 }
             }
         }

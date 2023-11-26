@@ -18,6 +18,8 @@ public class ProductToPurchase {
     @Column(nullable = false)
     private Long productId;
     @Column(nullable = false)
+    private String title;
+    @Column(nullable = false)
     private Short quantity;
     @Column(nullable = false)
     private float price;
