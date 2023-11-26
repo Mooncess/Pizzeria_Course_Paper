@@ -42,7 +42,7 @@ public class SecurityConfig {
                 .cors().disable()
                 .authorizeRequests() // Настройка правил авторизации запросов
                 .antMatchers("/category/**/purchase/**").authenticated() // Требует аутентификации
-                .antMatchers("/info").authenticated()
+                .antMatchers("/basket").authenticated()
                 .antMatchers("/admin/**").hasRole("ADMIN") // Требует роль ADMIN
                 .anyRequest().permitAll() // доступ ко всем остальным URL-адресам без требования аутентификации
                 .and()

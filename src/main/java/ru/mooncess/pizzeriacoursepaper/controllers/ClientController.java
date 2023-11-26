@@ -4,17 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import ru.mooncess.pizzeriacoursepaper.dto.BasketDto;
 import ru.mooncess.pizzeriacoursepaper.dto.PizzaPurchaseDto;
-import ru.mooncess.pizzeriacoursepaper.dto.ProductToPurchaseCreateDto;
 import ru.mooncess.pizzeriacoursepaper.entities.*;
 import ru.mooncess.pizzeriacoursepaper.exceptions.AppError;
 import ru.mooncess.pizzeriacoursepaper.service.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +27,6 @@ public class ClientController {
     private final SnackService snackService;
     private final PizzaService pizzaService;
     private final ProductToPurchaseService productToPurchaseService;
-    private final UserService userService;
     private final DoughService doughService;
 
     // Combo endpoints
@@ -133,6 +129,20 @@ public class ClientController {
             return ResponseEntity.notFound().build();
         }
     }
+    @PostMapping("/category/drink/purchase/{id}")
+    public ResponseEntity<?> purchaseDrink(@PathVariable Long id, @RequestParam Short quantity) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Optional<Drink> drinkOptional = drinkService.getDrinkById(id);
+        if (drinkOptional.isPresent()) {
+            Drink temp = drinkOptional.get();
+            Optional<ProductToPurchase> optionalProduct = productToPurchaseService.purchaseProduct(temp, quantity, username, null, null, null);
+            if (optionalProduct.isPresent()) {
+                return ResponseEntity.status(HttpStatus.OK).body(optionalProduct.get());
+            }
+        }
+        return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Incorrect data"), HttpStatus.BAD_REQUEST);
+    }
     // Hot endpoints
     @GetMapping("/category/hot")
     public ResponseEntity<List<Hot>> getAllHot(@RequestParam(name = "sort", required = false, defaultValue = "0") Integer sortPrice) {
@@ -147,7 +157,6 @@ public class ClientController {
         }
         return ResponseEntity.badRequest().build();
     }
-    // Snack endpoints
     @GetMapping("/category/hot/{id}")
     public ResponseEntity<?> getHotById(@PathVariable Long id) {
         Optional<Hot> optionalHot = hotService.getHotById(id);
@@ -158,6 +167,21 @@ public class ClientController {
             return ResponseEntity.notFound().build();
         }
     }
+    @PostMapping("/category/hot/purchase/{id}")
+    public ResponseEntity<?> purchaseHot(@PathVariable Long id, @RequestParam Short quantity) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Optional<Hot> hotOptional = hotService.getHotById(id);
+        if (hotOptional.isPresent()) {
+            Hot temp = hotOptional.get();
+            Optional<ProductToPurchase> optionalProduct = productToPurchaseService.purchaseProduct(temp, quantity, username, null, null, null);
+            if (optionalProduct.isPresent()) {
+                return ResponseEntity.status(HttpStatus.OK).body(optionalProduct.get());
+            }
+        }
+        return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Incorrect data"), HttpStatus.BAD_REQUEST);
+    }
+    // Snack endpoints
     @GetMapping("/category/snack")
     public ResponseEntity<List<Snack>> getAllSnack(@RequestParam(name = "sort", required = false, defaultValue = "0") Integer sortPrice) {
         if (sortPrice == 0) {
@@ -181,6 +205,20 @@ public class ClientController {
             return ResponseEntity.notFound().build();
         }
     }
+    @PostMapping("/category/snack/purchase/{id}")
+    public ResponseEntity<?> purchaseSnack(@PathVariable Long id, @RequestParam Short quantity) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Optional<Snack> snackOptional = snackService.getSnackById(id);
+        if (snackOptional.isPresent()) {
+            Snack temp = snackOptional.get();
+            Optional<ProductToPurchase> optionalProduct = productToPurchaseService.purchaseProduct(temp, quantity, username, null, null, null);
+            if (optionalProduct.isPresent()) {
+                return ResponseEntity.status(HttpStatus.OK).body(optionalProduct.get());
+            }
+        }
+        return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Incorrect data"), HttpStatus.BAD_REQUEST);
+    }
     // Pizza endpoints
     @GetMapping("/category/pizza")
     public ResponseEntity<List<Pizza>> getAllPizza(@RequestParam(name = "sort", required = false, defaultValue = "0") Integer sortPrice) {
@@ -195,7 +233,6 @@ public class ClientController {
         }
         return ResponseEntity.badRequest().build();
     }
-
     @GetMapping("/category/pizza/{id}")
     public ResponseEntity<?> getPizzaById(@PathVariable Long id) {
         Optional<Pizza> optionalPizza = pizzaService.getPizzaById(id);
@@ -236,5 +273,12 @@ public class ClientController {
         productList.addAll(hotService.getAllHot());
         productList.addAll(comboService.getAllCombo());
         return ResponseEntity.ok(productList);
+    }
+    // Basket endpoint
+    @GetMapping("/basket")
+    public ResponseEntity<BasketDto> getUserBasketList() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        return ResponseEntity.ok(productToPurchaseService.getUserBasketList(username));
     }
 }
