@@ -41,7 +41,7 @@ public class SecurityConfig {
                 .csrf().disable()
                 .cors().disable()
                 .authorizeRequests() // Настройка правил авторизации запросов
-                .antMatchers("/secured").authenticated() // Требует аутентификации
+                .antMatchers("/category/**/purchase/**").authenticated() // Требует аутентификации
                 .antMatchers("/info").authenticated()
                 .antMatchers("/admin/**").hasRole("ADMIN") // Требует роль ADMIN
                 .anyRequest().permitAll() // доступ ко всем остальным URL-адресам без требования аутентификации

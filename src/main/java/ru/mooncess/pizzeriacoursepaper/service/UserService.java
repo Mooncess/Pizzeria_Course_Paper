@@ -9,7 +9,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.mooncess.pizzeriacoursepaper.dto.RegistrationUserDto;
+import ru.mooncess.pizzeriacoursepaper.entities.Basket;
 import ru.mooncess.pizzeriacoursepaper.entities.User;
+import ru.mooncess.pizzeriacoursepaper.repositories.BasketRepository;
 import ru.mooncess.pizzeriacoursepaper.repositories.UserRepository;
 
 import java.util.List;
@@ -19,12 +21,18 @@ import java.util.stream.Collectors;
 @Service
 public class UserService implements UserDetailsService {
     private UserRepository userRepository;
+    private BasketRepository basketRepository;
     private RoleService roleService;
     private PasswordEncoder passwordEncoder;
 
     @Autowired
     public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    @Autowired
+    public void setBasketRepository(BasketRepository basketRepository) {
+        this.basketRepository = basketRepository;
     }
 
     @Autowired
@@ -56,9 +64,12 @@ public class UserService implements UserDetailsService {
 
     public User createNewUser(RegistrationUserDto registrationUserDto) {
         User user = new User();
+        Basket basket = new Basket();
+        basket = basketRepository.save(basket);
         user.setUsername(registrationUserDto.getUsername());
         user.setPassword(passwordEncoder.encode(registrationUserDto.getPassword()));
         user.setRoles(List.of(roleService.getUserRole()));
+        user.setBasket(basket);
         return userRepository.save(user);
     }
 }

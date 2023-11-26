@@ -16,15 +16,17 @@ public class ProductToPurchase {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
     @Column(nullable = false)
-    private String title;
+    private Long productId;
     @Column(nullable = false)
     private Short quantity;
     @Column(nullable = false)
     private float price;
     @ManyToOne
     @JoinColumn(name = "size")
-    private Size availableSize;
+    private Size size;
     @ManyToOne
     @JoinColumn(name = "dough")
-    private Dough availableDough;
+    private Dough dough;
+    @ManyToMany
+    private List<Additive> additives;
 }

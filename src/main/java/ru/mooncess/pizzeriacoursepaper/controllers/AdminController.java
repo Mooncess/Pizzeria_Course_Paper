@@ -171,29 +171,6 @@ public class AdminController {
         return ResponseEntity.notFound().build();
     }
     // Combo endpoints
-    @GetMapping("/combo")
-    public ResponseEntity<List<Combo>> getAllCombo(@RequestParam(name = "sort", required = false, defaultValue = "0") Integer sortPrice) {
-        if (sortPrice == 0) {
-            return ResponseEntity.ok(comboService.getAllCombo());
-        }
-        else if (sortPrice == 1) {
-            return ResponseEntity.ok(comboService.findByOrderByPriceAsc());
-        }
-        else if (sortPrice == 2) {
-            return ResponseEntity.ok(comboService.findByOrderByPriceDesc());
-        }
-        return ResponseEntity.badRequest().build();
-    }
-    @GetMapping("/combo/{id}")
-    public ResponseEntity<?> getComboById(@PathVariable Long id) {
-        Optional<Combo> optionalCombo = comboService.getComboById(id);
-        if (optionalCombo.isPresent()) {
-            Combo combo = optionalCombo.get();
-            return ResponseEntity.ok(combo);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
     @PostMapping("/combo")
     public ResponseEntity<?> createCombo(@RequestBody ComboCreateDto combo) {
         Optional<Combo> optionalCombo = comboService.createCombo(combo);
@@ -220,29 +197,6 @@ public class AdminController {
         return ResponseEntity.notFound().build();
     }
     // Dessert endpoints
-    @GetMapping("/dessert")
-    public ResponseEntity<List<Dessert>> getAllDessert(@RequestParam(name = "sort", required = false, defaultValue = "0") Integer sortPrice) {
-        if (sortPrice == 0) {
-            return ResponseEntity.ok(dessertService.getAllDessert());
-        }
-        else if (sortPrice == 1) {
-            return ResponseEntity.ok(dessertService.findByOrderByPriceAsc());
-        }
-        else if (sortPrice == 2) {
-            return ResponseEntity.ok(dessertService.findByOrderByPriceDesc());
-        }
-        return ResponseEntity.badRequest().build();
-    }
-    @GetMapping("/dessert/{id}")
-    public ResponseEntity<?> getDessertById(@PathVariable Long id) {
-        Optional<Dessert> optionalDessert = dessertService.getDessertById(id);
-        if (optionalDessert.isPresent()) {
-            Dessert dessert = optionalDessert.get();
-            return ResponseEntity.ok(dessert);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
     @PostMapping("/dessert")
     public ResponseEntity<?> createDessert(@RequestBody DessertCreateDto dessert) {
         Optional<Dessert> optionalDessert = dessertService.createDessert(dessert);
@@ -269,29 +223,6 @@ public class AdminController {
         return ResponseEntity.notFound().build();
     }
     // Drink endpoints
-    @GetMapping("/drink")
-    public ResponseEntity<List<Drink>> getAllDrink(@RequestParam(name = "sort", required = false, defaultValue = "0") Integer sortPrice) {
-        if (sortPrice == 0) {
-            return ResponseEntity.ok(drinkService.getAllDrink());
-        }
-        else if (sortPrice == 1) {
-            return ResponseEntity.ok(drinkService.findByOrderByPriceAsc());
-        }
-        else if (sortPrice == 2) {
-            return ResponseEntity.ok(drinkService.findByOrderByPriceDesc());
-        }
-        return ResponseEntity.badRequest().build();
-    }
-    @GetMapping("/drink/{id}")
-    public ResponseEntity<?> getDrinkById(@PathVariable Long id) {
-        Optional<Drink> optionalDrink = drinkService.getDrinkById(id);
-        if (optionalDrink.isPresent()) {
-            Drink drink = optionalDrink.get();
-            return ResponseEntity.ok(drink);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
     @PostMapping("/drink")
     public ResponseEntity<?> createDrink(@RequestBody DrinkCreateDto drink) {
         Optional<Drink> optionalDrink = drinkService.createDrink(drink);
@@ -318,29 +249,6 @@ public class AdminController {
         return ResponseEntity.notFound().build();
     }
     // Hot endpoints
-    @GetMapping("/hot")
-    public ResponseEntity<List<Hot>> getAllHot(@RequestParam(name = "sort", required = false, defaultValue = "0") Integer sortPrice) {
-        if (sortPrice == 0) {
-            return ResponseEntity.ok(hotService.getAllHot());
-        }
-        else if (sortPrice == 1) {
-            return ResponseEntity.ok(hotService.findByOrderByPriceAsc());
-        }
-        else if (sortPrice == 2) {
-            return ResponseEntity.ok(hotService.findByOrderByPriceDesc());
-        }
-        return ResponseEntity.badRequest().build();
-    }
-    @GetMapping("/hot/{id}")
-    public ResponseEntity<?> getHotById(@PathVariable Long id) {
-        Optional<Hot> optionalHot = hotService.getHotById(id);
-        if (optionalHot.isPresent()) {
-            Hot hot = optionalHot.get();
-            return ResponseEntity.ok(hot);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
     @PostMapping("/hot")
     public ResponseEntity<?> createHot(@RequestBody HotCreateDto hot) {
         Optional<Hot> optionalHot = hotService.createHot(hot);
@@ -368,29 +276,6 @@ public class AdminController {
     }
 
     // Snack endpoints
-    @GetMapping("/snack")
-    public ResponseEntity<List<Snack>> getAllSnack(@RequestParam(name = "sort", required = false, defaultValue = "0") Integer sortPrice) {
-        if (sortPrice == 0) {
-            return ResponseEntity.ok(snackService.getAllSnack());
-        }
-        else if (sortPrice == 1) {
-            return ResponseEntity.ok(snackService.findByOrderByPriceAsc());
-        }
-        else if (sortPrice == 2) {
-            return ResponseEntity.ok(snackService.findByOrderByPriceDesc());
-        }
-        return ResponseEntity.badRequest().build();
-    }
-    @GetMapping("/snack/{id}")
-    public ResponseEntity<?> getSnackById(@PathVariable Long id) {
-        Optional<Snack> optionalSnack = snackService.getSnackById(id);
-        if (optionalSnack.isPresent()) {
-            Snack snack = optionalSnack.get();
-            return ResponseEntity.ok(snack);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
     @PostMapping("/snack")
     public ResponseEntity<?> createSnack(@RequestBody SnackCreateDto snack) {
         Optional<Snack> optionalSnack = snackService.createSnack(snack);
@@ -418,31 +303,6 @@ public class AdminController {
     }
 
     // Pizza endpoints
-    @GetMapping("/pizza")
-    public ResponseEntity<List<Pizza>> getAllPizza(@RequestParam(name = "sort", required = false, defaultValue = "0") Integer sortPrice) {
-        if (sortPrice == 0) {
-            return ResponseEntity.ok(pizzaService.getAllPizza());
-        }
-        else if (sortPrice == 1) {
-            return ResponseEntity.ok(pizzaService.findByOrderByPriceAsc());
-        }
-        else if (sortPrice == 2) {
-            return ResponseEntity.ok(pizzaService.findByOrderByPriceDesc());
-        }
-        return ResponseEntity.badRequest().build();
-    }
-
-    @GetMapping("/pizza/{id}")
-    public ResponseEntity<?> getPizzaById(@PathVariable Long id) {
-        Optional<Pizza> optionalPizza = pizzaService.getPizzaById(id);
-        if (optionalPizza.isPresent()) {
-            Pizza pizza = optionalPizza.get();
-            return ResponseEntity.ok(pizza);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
     @PostMapping("/pizza")
     public ResponseEntity<?> createPizza(@RequestBody PizzaCreateDto pizza) {
         Optional<Pizza> optionalPizza = pizzaService.createPizza(pizza);
@@ -467,17 +327,5 @@ public class AdminController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
-    }
-    // Product endpoints
-    @GetMapping("/category/all")
-    public ResponseEntity<List<Product>> getAllProduct() {
-        List<Product> productList = new ArrayList<>();
-        productList.addAll(pizzaService.getAllPizza());
-        productList.addAll(snackService.getAllSnack());
-        productList.addAll(drinkService.getAllDrink());
-        productList.addAll(dessertService.getAllDessert());
-        productList.addAll(hotService.getAllHot());
-        productList.addAll(comboService.getAllCombo());
-        return ResponseEntity.ok(productList);
     }
 }

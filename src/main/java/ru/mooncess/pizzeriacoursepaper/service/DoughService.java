@@ -19,6 +19,10 @@ public class DoughService {
         return doughRepository.findAll();
     }
 
+    public Optional<Dough> getDoughById(int id) {
+        return doughRepository.findById(id);
+    }
+
     public Optional<Dough> createDough(String name) {
         Dough dough = new Dough();
         dough.setName(name);

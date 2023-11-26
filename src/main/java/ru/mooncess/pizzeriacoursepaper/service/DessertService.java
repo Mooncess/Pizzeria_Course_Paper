@@ -26,13 +26,13 @@ public class DessertService {
     }
 
     public Optional<Dessert> createDessert(DessertCreateDto dessert) {
-        if (dessert.getPrice() > 0 && dessert.getWeight() > 0) {
-            Dessert newDessert = dessertMapper.toEntity(dessert);
-            try {
+        try {
+            if (dessert.getPrice() > 0 && dessert.getWeight() > 0) {
+                Dessert newDessert = dessertMapper.toEntity(dessert);
                 return Optional.of(dessertRepository.getById(dessertRepository.save(newDessert).getId()));
-            } catch (Exception e) {
-                return Optional.empty();
             }
+        } catch (Exception e) {
+            return Optional.empty();
         }
         return Optional.empty();
     }
@@ -40,14 +40,14 @@ public class DessertService {
     public Optional<Dessert> updateDessert(Long id, DessertCreateDto dessert) {
         Optional<Dessert> optionalDessert = dessertRepository.findById(id);
         if (optionalDessert.isPresent()) {
-            if (dessert.getPrice() > 0 && dessert.getWeight() > 0) {
-                Dessert updatedDessert = dessertMapper.toEntity(dessert);
-                updatedDessert.setId(id);
-                try {
+            try {
+                if (dessert.getPrice() > 0 && dessert.getWeight() > 0) {
+                    Dessert updatedDessert = dessertMapper.toEntity(dessert);
+                    updatedDessert.setId(id);
                     return Optional.of(dessertRepository.save(updatedDessert));
-                } catch (Exception e) {
-                    return Optional.empty();
                 }
+            } catch (Exception e) {
+                return Optional.empty();
             }
         }
         return Optional.empty();
