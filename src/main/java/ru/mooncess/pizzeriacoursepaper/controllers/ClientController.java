@@ -216,6 +216,7 @@ public class ClientController {
             Optional<Dough> optionalDough = doughService.getDoughById(dto.getDough());
             Optional<Size> optionalSize = sizeService.getSizeById(dto.getSize());
             if (optionalSize.isPresent() && optionalDough.isPresent()) {
+                if (dto.getAdditives().isEmpty()) dto.setAdditives(null);
                 Optional<ProductToPurchase> optionalProduct = productToPurchaseService.purchaseProduct(temp, quantity, username, optionalDough.get(), optionalSize.get(), dto.getAdditives());
                 if (optionalProduct.isPresent()) {
                     return ResponseEntity.status(HttpStatus.CREATED).body(optionalProduct.get());
