@@ -1,6 +1,8 @@
 package ru.mooncess.pizzeriacoursepaper.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -9,8 +11,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.mooncess.pizzeriacoursepaper.dto.RegistrationUserDto;
+import ru.mooncess.pizzeriacoursepaper.dto.UserDto;
 import ru.mooncess.pizzeriacoursepaper.entities.Basket;
 import ru.mooncess.pizzeriacoursepaper.entities.User;
+import ru.mooncess.pizzeriacoursepaper.exceptions.AppError;
 import ru.mooncess.pizzeriacoursepaper.repositories.BasketRepository;
 import ru.mooncess.pizzeriacoursepaper.repositories.UserRepository;
 
@@ -71,5 +75,19 @@ public class UserService implements UserDetailsService {
         user.setRoles(List.of(roleService.getUserRole()));
         user.setBasket(basket);
         return userRepository.save(user);
+    }
+
+    public ResponseEntity<?> changeUsername(String username, String newUsername) {
+        if (!newUsername.contains("@")) {
+            return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Incorrect email address"), HttpStatus.BAD_REQUEST);
+        }
+        if (findByUsername(newUsername).isPresent()) {
+            return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "A user with the specified email address already exists"), HttpStatus.BAD_REQUEST);
+        }
+        Optional<User> optionalUser = findByUsername(username);
+        User user = optionalUser.get();
+        user.setUsername(newUsername);
+        userRepository.save(user);
+        return ResponseEntity.status(HttpStatus.OK).body(new UserDto(user.getId(), user.getUsername()));
     }
 }

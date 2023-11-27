@@ -44,6 +44,7 @@ public class SecurityConfig {
                 .antMatchers("/category/**/purchase/**").authenticated() // Требует аутентификации
                 .antMatchers("/basket/**").authenticated()
                 .antMatchers("/order/**").authenticated()
+                .antMatchers("/profile").authenticated()
                 .antMatchers("/admin/**").hasRole("ADMIN") // Требует роль ADMIN
                 .anyRequest().permitAll() // доступ ко всем остальным URL-адресам без требования аутентификации
                 .and()
