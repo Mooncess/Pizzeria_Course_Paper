@@ -5,12 +5,9 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import ru.mooncess.pizzeriacoursepaper.dto.ClientOrderDto;
 import ru.mooncess.pizzeriacoursepaper.dto.OrderDto;
-import ru.mooncess.pizzeriacoursepaper.dto.UserDto;
 import ru.mooncess.pizzeriacoursepaper.entities.*;
 import ru.mooncess.pizzeriacoursepaper.mappers.OrderMapper;
 import ru.mooncess.pizzeriacoursepaper.repositories.*;
-import ru.mooncess.pizzeriacoursepaper.repositories.additive.AdditiveRepository;
-import ru.mooncess.pizzeriacoursepaper.repositories.pizza.PizzaRepository;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -22,11 +19,8 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class OrderService {
-    private final ProductToPurchaseRepository repository;
     private final UserRepository userRepository;
     private final BasketRepository basketRepository;
-    private final AdditiveRepository additiveRepository;
-    private final PizzaRepository pizzaRepository;
     private final OrderRepository orderRepository;
     private final OrderStatusRepository orderStatusRepository;
     private final OrderMapper orderMapper = Mappers.getMapper(OrderMapper.class);

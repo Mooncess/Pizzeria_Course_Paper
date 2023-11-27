@@ -1,7 +1,6 @@
 package ru.mooncess.pizzeriacoursepaper.service;
 
 import lombok.RequiredArgsConstructor;
-import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import ru.mooncess.pizzeriacoursepaper.dto.SnackCreateDto;
 import ru.mooncess.pizzeriacoursepaper.entities.Snack;
@@ -15,7 +14,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class SnackService {
     private final SnackRepository snackRepository;
-    private final SnackMapper snackMapper = Mappers.getMapper(SnackMapper.class);
+    private final SnackMapper snackMapper;
 
     public List<Snack> getAllSnack() {
         return snackRepository.findAll();

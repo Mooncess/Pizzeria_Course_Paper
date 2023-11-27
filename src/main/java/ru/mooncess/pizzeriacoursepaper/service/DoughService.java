@@ -1,8 +1,6 @@
 package ru.mooncess.pizzeriacoursepaper.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.mooncess.pizzeriacoursepaper.entities.Dough;
 import ru.mooncess.pizzeriacoursepaper.repositories.DoughRepository;
