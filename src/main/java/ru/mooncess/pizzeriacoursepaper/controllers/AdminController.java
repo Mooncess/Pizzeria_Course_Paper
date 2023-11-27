@@ -141,7 +141,7 @@ public class AdminController {
         return ResponseEntity.notFound().build();
     }
     // Order status endpoints
-    @GetMapping("/orderStatus")
+    @GetMapping("/order-status")
     public ResponseEntity<List<OrderStatus>> getAllOrderStatus() {
         return ResponseEntity.ok(orderStatusService.getAllOrderStatus());
     }

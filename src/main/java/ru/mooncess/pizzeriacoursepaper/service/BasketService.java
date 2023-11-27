@@ -14,12 +14,13 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class ProductToPurchaseService {
+public class BasketService {
     private final ProductToPurchaseRepository repository;
     private final UserRepository userRepository;
     private final BasketRepository basketRepository;
     private final AdditiveRepository additiveRepository;
     private final PizzaRepository pizzaRepository;
+
     public Optional<ProductToPurchase> purchaseProduct(Product sourceProduct, Short quantity, String username, Dough dough, Size size, List<Long> additiveList) {
         try {
             Basket basket = basketRepository.getById(userRepository.findByUsername(username).get().getBasket().getId());
@@ -41,10 +42,9 @@ public class ProductToPurchaseService {
                     if (!pizzaRepository.getById(sourceProduct.getId()).getAvailableAdditives().contains(i)) {
                         return Optional.empty();
                     }
-                    priceAdditive+=i.getPrice();
+                    priceAdditive += i.getPrice();
                 }
-            }
-            else newProduct.setAdditives(Collections.emptyList());
+            } else newProduct.setAdditives(Collections.emptyList());
             newProduct.setPrice((sourceProduct.getPrice() + priceAdditive) * quantity);
             // Проверяем, есть ли в корзине уже такой продукт
             for (ProductToPurchase i : basket.getBasketItemList()) {
@@ -53,12 +53,12 @@ public class ProductToPurchaseService {
                         ((i.getSize() != null && i.getSize().equals(newProduct.getSize())) || (i.getSize() == null && newProduct.getSize() == null)) &&
                         ((!i.getAdditives().isEmpty() && i.getAdditives().containsAll(newProduct.getAdditives()) && newProduct.getAdditives().containsAll(i.getAdditives())) || (i.getAdditives().isEmpty() && newProduct.getAdditives().isEmpty()))) {
                     // Нашли такой продукт в корзине => увеличить итоговую стоимость и количество
-                    newProduct.setQuantity((short) (newProduct.getQuantity()+i.getQuantity()));
+                    newProduct.setQuantity((short) (newProduct.getQuantity() + i.getQuantity()));
                     newProduct.setPrice((sourceProduct.getPrice() + priceAdditive) * newProduct.getQuantity());
                     List<ProductToPurchase> optionalList = repository.findAllByProductIdAndQuantityAndDoughAndSize(newProduct.getProductId(), newProduct.getQuantity(), newProduct.getDough(), newProduct.getSize());
                     if (!optionalList.isEmpty()) {
                         for (ProductToPurchase j : optionalList) {
-                            if ((!j.getAdditives().isEmpty() && j.getAdditives().equals(newProduct.getAdditives())) || (j.getAdditives().isEmpty() && newProduct.getAdditives() == null)) {
+                            if ((!j.getAdditives().isEmpty() && j.getAdditives().containsAll(newProduct.getAdditives()) && newProduct.getAdditives().containsAll(j.getAdditives())) || (j.getAdditives().isEmpty() && newProduct.getAdditives().isEmpty())) {
                                 // В БД уже есть запись для данного продукта на продажу
                                 basket.getBasketItemList().set(basket.getBasketItemList().indexOf(i), j);
                                 basketRepository.save(basket);
@@ -105,5 +105,60 @@ public class ProductToPurchaseService {
         }
         dto.setTotal(total);
         return dto;
+    }
+
+    public Optional<ProductToPurchase> updateBasket(long id, String username, short newQuantity) {
+        Basket basket = userRepository.findByUsername(username).get().getBasket();
+        try {
+            Optional<ProductToPurchase> optionalProductToPurchase = repository.findById(id);
+            if (optionalProductToPurchase.isPresent() && basket.getBasketItemList().contains(optionalProductToPurchase.get())) {
+                ProductToPurchase newProduct = new ProductToPurchase();
+                newProduct.setSize(optionalProductToPurchase.get().getSize());
+                newProduct.setDough(optionalProductToPurchase.get().getDough());
+                newProduct.setProductId(optionalProductToPurchase.get().getProductId());
+                if (optionalProductToPurchase.get().getAdditives().isEmpty()) newProduct.setAdditives(Collections.emptyList());
+                else newProduct.setAdditives(optionalProductToPurchase.get().getAdditives());
+                newProduct.setTitle(optionalProductToPurchase.get().getTitle());
+                newProduct.setPrice((optionalProductToPurchase.get().getPrice() / optionalProductToPurchase.get().getQuantity()) * newQuantity);
+                newProduct.setQuantity(newQuantity);
+
+                int index = basket.getBasketItemList().indexOf(optionalProductToPurchase.get());
+
+                List<ProductToPurchase> optionalList = repository.findAllByProductIdAndQuantityAndDoughAndSize(newProduct.getProductId(), newProduct.getQuantity(), newProduct.getDough(), newProduct.getSize());
+                if (!optionalList.isEmpty()) {
+                    for (ProductToPurchase j : optionalList) {
+                        if ((!j.getAdditives().isEmpty() && j.getAdditives().containsAll(newProduct.getAdditives()) && newProduct.getAdditives().containsAll(j.getAdditives())) || (j.getAdditives().isEmpty() && newProduct.getAdditives().isEmpty())) {
+                            // В БД уже есть запись для данного продукта на продажу
+                            basket.getBasketItemList().set(index, j);
+                            basketRepository.save(basket);
+                            return Optional.of(j);
+                        }
+                    }
+                }
+                // В БД еще нет такой записи для данного продукта на продажу
+                newProduct = repository.save(newProduct);
+                basket.getBasketItemList().set(index, newProduct);
+                basketRepository.save(basket);
+                return Optional.of(newProduct);
+            }
+            return Optional.empty();
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
+    public boolean deleteFromBasket(long id, String username) {
+        Basket basket = userRepository.findByUsername(username).get().getBasket();
+        try {
+            Optional<ProductToPurchase> optionalProductToPurchase = repository.findById(id);
+            if (optionalProductToPurchase.isPresent() && basket.getBasketItemList().contains(optionalProductToPurchase.get())) {
+                basket.getBasketItemList().remove(optionalProductToPurchase.get());
+                basketRepository.save(basket);
+                return true;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return false;
     }
 }

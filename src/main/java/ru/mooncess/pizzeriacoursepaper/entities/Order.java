@@ -1,7 +1,7 @@
 package ru.mooncess.pizzeriacoursepaper.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,7 +10,6 @@ import java.util.List;
 
 @Entity
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "orders")
@@ -23,7 +22,7 @@ public class Order {
     @Column(nullable = false)
     private String creationDate;
     @ManyToOne
-    @JoinColumn(name = "status_id")
+    @JoinColumn(name = "status_id", nullable = false)
     private OrderStatus status;
     @Column(nullable = false)
     private Float total;

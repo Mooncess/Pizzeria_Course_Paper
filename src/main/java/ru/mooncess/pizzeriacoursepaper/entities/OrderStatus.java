@@ -1,6 +1,7 @@
 package ru.mooncess.pizzeriacoursepaper.entities;
 
 import javax.persistence.*;
+
 import lombok.Data;
 
 @Entity

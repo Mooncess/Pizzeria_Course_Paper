@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.mooncess.pizzeriacoursepaper.dto.BasketDto;
+import ru.mooncess.pizzeriacoursepaper.dto.ClientOrderDto;
 import ru.mooncess.pizzeriacoursepaper.dto.PizzaPurchaseDto;
 import ru.mooncess.pizzeriacoursepaper.entities.*;
 import ru.mooncess.pizzeriacoursepaper.exceptions.AppError;
@@ -26,8 +27,9 @@ public class ClientController {
     private final HotService hotService;
     private final SnackService snackService;
     private final PizzaService pizzaService;
-    private final ProductToPurchaseService productToPurchaseService;
+    private final BasketService basketService;
     private final DoughService doughService;
+    private final OrderService orderService;
 
     // Combo endpoints
     @GetMapping("/category/combo")
@@ -60,7 +62,7 @@ public class ClientController {
         Optional<Combo> comboOptional = comboService.getComboById(id);
         if (comboOptional.isPresent()) {
             Combo temp = comboOptional.get();
-            Optional<ProductToPurchase> optionalProduct = productToPurchaseService.purchaseProduct(temp, quantity, username, temp.getAvailableDough(), temp.getAvailableSize(), null);
+            Optional<ProductToPurchase> optionalProduct = basketService.purchaseProduct(temp, quantity, username, temp.getAvailableDough(), temp.getAvailableSize(), null);
             if (optionalProduct.isPresent()) {
                 return ResponseEntity.status(HttpStatus.OK).body(optionalProduct.get());
             }
@@ -98,7 +100,7 @@ public class ClientController {
         Optional<Dessert> dessertOptional = dessertService.getDessertById(id);
         if (dessertOptional.isPresent()) {
             Dessert temp = dessertOptional.get();
-            Optional<ProductToPurchase> optionalProduct = productToPurchaseService.purchaseProduct(temp, quantity, username, null, null, null);
+            Optional<ProductToPurchase> optionalProduct = basketService.purchaseProduct(temp, quantity, username, null, null, null);
             if (optionalProduct.isPresent()) {
                 return ResponseEntity.status(HttpStatus.OK).body(optionalProduct.get());
             }
@@ -136,7 +138,7 @@ public class ClientController {
         Optional<Drink> drinkOptional = drinkService.getDrinkById(id);
         if (drinkOptional.isPresent()) {
             Drink temp = drinkOptional.get();
-            Optional<ProductToPurchase> optionalProduct = productToPurchaseService.purchaseProduct(temp, quantity, username, null, null, null);
+            Optional<ProductToPurchase> optionalProduct = basketService.purchaseProduct(temp, quantity, username, null, null, null);
             if (optionalProduct.isPresent()) {
                 return ResponseEntity.status(HttpStatus.OK).body(optionalProduct.get());
             }
@@ -174,7 +176,7 @@ public class ClientController {
         Optional<Hot> hotOptional = hotService.getHotById(id);
         if (hotOptional.isPresent()) {
             Hot temp = hotOptional.get();
-            Optional<ProductToPurchase> optionalProduct = productToPurchaseService.purchaseProduct(temp, quantity, username, null, null, null);
+            Optional<ProductToPurchase> optionalProduct = basketService.purchaseProduct(temp, quantity, username, null, null, null);
             if (optionalProduct.isPresent()) {
                 return ResponseEntity.status(HttpStatus.OK).body(optionalProduct.get());
             }
@@ -212,7 +214,7 @@ public class ClientController {
         Optional<Snack> snackOptional = snackService.getSnackById(id);
         if (snackOptional.isPresent()) {
             Snack temp = snackOptional.get();
-            Optional<ProductToPurchase> optionalProduct = productToPurchaseService.purchaseProduct(temp, quantity, username, null, null, null);
+            Optional<ProductToPurchase> optionalProduct = basketService.purchaseProduct(temp, quantity, username, null, null, null);
             if (optionalProduct.isPresent()) {
                 return ResponseEntity.status(HttpStatus.OK).body(optionalProduct.get());
             }
@@ -254,7 +256,7 @@ public class ClientController {
             Optional<Size> optionalSize = sizeService.getSizeById(dto.getSize());
             if (optionalSize.isPresent() && optionalDough.isPresent()) {
                 if (dto.getAdditives().isEmpty()) dto.setAdditives(null);
-                Optional<ProductToPurchase> optionalProduct = productToPurchaseService.purchaseProduct(temp, quantity, username, optionalDough.get(), optionalSize.get(), dto.getAdditives());
+                Optional<ProductToPurchase> optionalProduct = basketService.purchaseProduct(temp, quantity, username, optionalDough.get(), optionalSize.get(), dto.getAdditives());
                 if (optionalProduct.isPresent()) {
                     return ResponseEntity.status(HttpStatus.OK).body(optionalProduct.get());
                 }
@@ -279,6 +281,58 @@ public class ClientController {
     public ResponseEntity<BasketDto> getUserBasketList() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        return ResponseEntity.ok(productToPurchaseService.getUserBasketList(username));
+        return ResponseEntity.ok(basketService.getUserBasketList(username));
+    }
+
+    @PutMapping("/basket/{id}")
+    public ResponseEntity<?> updateBasketList(@PathVariable Long id, @RequestParam Short quantity) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Optional<ProductToPurchase> productToPurchaseOptional = basketService.updateBasket(id, username, quantity);
+        if (productToPurchaseOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.OK).body(productToPurchaseOptional.get());
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/basket/{id}")
+    public ResponseEntity<?> deleteFromBasketList(@PathVariable Long id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        if (basketService.deleteFromBasket(id, username)) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    // Order endpoint
+    @PostMapping("/order")
+    public ResponseEntity<?> createOrder(@RequestParam String address) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Optional<ClientOrderDto> optionalOrder = orderService.createOrder(username, address);
+        if (optionalOrder.isPresent()) {
+            return ResponseEntity.status(HttpStatus.OK).body(optionalOrder.get());
+        }
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/order")
+    public ResponseEntity<?> getClientOrder() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        List<ClientOrderDto> orderList = orderService.getAllClientOrder(username);
+        return ResponseEntity.status(HttpStatus.OK).body(orderList);
+    }
+
+    @GetMapping("/order/{id}")
+    public ResponseEntity<?> getClientOrderById(@PathVariable Long id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        Optional<ClientOrderDto> optional = orderService.getClientOrderById(username, id);
+        if (optional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.OK).body(optional.get());
+        }
+        return ResponseEntity.notFound().build();
     }
 }
