@@ -27,6 +27,7 @@ public class AdminController {
     private final SnackService snackService;
     private final PizzaService pizzaService;
     private final OrderService orderService;
+    private final UserService userService;
 
     // Additive endpoints
     @GetMapping("/additive")
@@ -353,6 +354,21 @@ public class AdminController {
     @PutMapping("/order/{id}")
     public ResponseEntity<?> getClientOrder(@PathVariable Long id, @RequestParam int statusId) {
         Optional<ClientOrderDto> optional = orderService.updateOrderStatusOfOrder(id, statusId);
+        if (optional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.OK).body(optional.get());
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    // User endpoints
+    @GetMapping("/user-list")
+    public ResponseEntity<?> getAllUsers() {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.getAllUsers());
+    }
+
+    @GetMapping("/user-list/{id}")
+    public ResponseEntity<?> findUserById(@PathVariable Long id) {
+        Optional<UserDto> optional = userService.findUserById(id);
         if (optional.isPresent()) {
             return ResponseEntity.status(HttpStatus.OK).body(optional.get());
         }

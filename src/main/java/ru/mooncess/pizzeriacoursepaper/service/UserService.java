@@ -18,6 +18,7 @@ import ru.mooncess.pizzeriacoursepaper.exceptions.AppError;
 import ru.mooncess.pizzeriacoursepaper.repositories.BasketRepository;
 import ru.mooncess.pizzeriacoursepaper.repositories.UserRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -89,5 +90,19 @@ public class UserService implements UserDetailsService {
         user.setUsername(newUsername);
         userRepository.save(user);
         return ResponseEntity.status(HttpStatus.OK).body(new UserDto(user.getId(), user.getUsername()));
+    }
+
+    public List<UserDto> getAllUsers() {
+        List<User> list = userRepository.findAll();
+        List<UserDto> dtoList = new ArrayList<>();
+        for (User i : list) {
+            dtoList.add(new UserDto(i.getId(), i.getUsername()));
+        }
+        return dtoList;
+    }
+
+    public Optional<UserDto> findUserById(long id) {
+        Optional<User> optional = userRepository.findById(id);
+        return optional.map(user -> new UserDto(user.getId(), user.getUsername()));
     }
 }
