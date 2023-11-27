@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import ru.mooncess.pizzeriacoursepaper.dto.ClientOrderDto;
+import ru.mooncess.pizzeriacoursepaper.dto.OrderDto;
 import ru.mooncess.pizzeriacoursepaper.entities.Basket;
 import ru.mooncess.pizzeriacoursepaper.entities.Order;
 import ru.mooncess.pizzeriacoursepaper.entities.OrderStatus;
@@ -75,6 +76,44 @@ public class OrderService {
         long userId = userRepository.findByUsername(username).get().getId();
         if (optionalOrder.isPresent() && optionalOrder.get().getBuyer().getId() == userId) {
             return Optional.of(orderMapper.entityToClientDto(optionalOrder.get()));
+        }
+        return Optional.empty();
+    }
+
+    public List<OrderDto> getAllOrder() {
+        List<Order> orderList = orderRepository.findAll();
+        List<OrderDto> list = new ArrayList<>();
+        for (Order i : orderList) {
+            list.add(orderMapper.entityToDto(i));
+        }
+        return list;
+    }
+
+    public Optional<OrderDto> getOrderById(long id) {
+        Optional<Order> optionalOrder = orderRepository.findById(id);
+        return optionalOrder.map(orderMapper::entityToDto);
+    }
+
+    public List<OrderDto> getOrderByStatus(int orderStatusId) {
+        Optional<OrderStatus> optionalOrderStatus = orderStatusRepository.findById(orderStatusId);
+        List<OrderDto> list = new ArrayList<>();
+        if (optionalOrderStatus.isPresent()) {
+            List<Order> optionalOrder = orderRepository.findAllByStatus(optionalOrderStatus.get());
+            for (Order i : optionalOrder) {
+                list.add(orderMapper.entityToDto(i));
+            }
+        }
+        return list;
+    }
+
+    public Optional<ClientOrderDto> updateOrderStatusOfOrder(long orderId, int orderStatusId) {
+        Optional<Order> optionalOrder = orderRepository.findById(orderId);
+        Optional<OrderStatus> optionalOrderStatus = orderStatusRepository.findById(orderStatusId);
+        if (optionalOrder.isPresent() && optionalOrderStatus.isPresent()) {
+            Order order = optionalOrder.get();
+            order.setStatus(optionalOrderStatus.get());
+            orderRepository.save(order);
+            return Optional.of(orderMapper.entityToClientDto(order));
         }
         return Optional.empty();
     }

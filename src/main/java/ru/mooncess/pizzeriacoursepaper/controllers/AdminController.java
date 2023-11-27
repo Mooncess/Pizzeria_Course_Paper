@@ -9,7 +9,6 @@ import ru.mooncess.pizzeriacoursepaper.entities.*;
 import ru.mooncess.pizzeriacoursepaper.exceptions.AppError;
 import ru.mooncess.pizzeriacoursepaper.service.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +26,7 @@ public class AdminController {
     private final HotService hotService;
     private final SnackService snackService;
     private final PizzaService pizzaService;
+    private final OrderService orderService;
 
     // Additive endpoints
     @GetMapping("/additive")
@@ -325,6 +325,36 @@ public class AdminController {
     public ResponseEntity<Void> deletePizza(@PathVariable Long id) {
         if (pizzaService.deletePizza(id)) {
             return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    // Order endpoints
+    @GetMapping("/order")
+    public ResponseEntity<?> getClientOrder() {
+        List<OrderDto> orderList = orderService.getAllOrder();
+        return ResponseEntity.status(HttpStatus.OK).body(orderList);
+    }
+
+    @GetMapping("/order/{id}")
+    public ResponseEntity<?> getClientOrderById(@PathVariable Long id) {
+        Optional<OrderDto> optional = orderService.getOrderById(id);
+        if (optional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.OK).body(optional.get());
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/order-by-status")
+    public ResponseEntity<?> getClientOrderByStatus(@RequestParam int id) {
+        return ResponseEntity.status(HttpStatus.OK).body(orderService.getOrderByStatus(id));
+    }
+
+    @PutMapping("/order/{id}")
+    public ResponseEntity<?> getClientOrder(@PathVariable Long id, @RequestParam int statusId) {
+        Optional<ClientOrderDto> optional = orderService.updateOrderStatusOfOrder(id, statusId);
+        if (optional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.OK).body(optional.get());
         }
         return ResponseEntity.notFound().build();
     }
